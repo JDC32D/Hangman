@@ -8,9 +8,12 @@ import android.view.MotionEvent
 import android.view.View
 import android.graphics.Color
 import android.graphics.Paint
+import android.text.TextUtils.indexOf
 
 data class DrawObj(val origin: PointF) {
     var endPoint: PointF = origin
+//    var start: PointF = origin
+//    var radius: Float = 0.toFloat()
 }
 
 class DrawView: View {
@@ -30,19 +33,23 @@ class DrawView: View {
 
     override fun onDraw(canvas: Canvas?) {
         // Log when drawing occurs
-        currentDrawObj?.let {
-//            val left = Math.min(it.origin.x, it.endPoint.x)
-//            val right = Math.max(it.origin.x, it.endPoint.x)
-//            val top  = Math.min(it.origin.y, it.endPoint.y)
-//            val bottom = Math.max(it.origin.y, it.endPoint.y)
+        //currentDrawObj?.let {
+        //This forEach gives persistence on the screen
+        objs.forEach{
             var radius = Math.abs(it.endPoint.y - it.origin.x)
             paint.strokeWidth = 100.toFloat()
 
-            if(objs.size <= 1)
-                canvas?.drawCircle(it.origin.x, it.endPoint.y, radius , paint )
-            else
-                canvas?.drawLine(it.origin.x, it.origin.y, it.endPoint.x, it.endPoint.y, paint)
-
+            if(objs.size == 1) {
+                canvas?.drawCircle(it.origin.x, it.endPoint.y, radius, paint)
+            }
+            else {
+                if(objs.indexOf(it) == 0) {
+                    canvas?.drawCircle(it.origin.x, it.endPoint.y, radius, paint)
+                } else {
+                    canvas?.drawLine(it.origin.x, it.origin.y, it.endPoint.x, it.endPoint.y, paint)
+                    //canvas?.drawCircle(objs[1].start.x, objs[1].endPoint.y, objs[1].radius, paint)
+                }
+            }
         }
         super.onDraw(canvas)
     }
@@ -69,7 +76,7 @@ class DrawView: View {
 //                }
 //                invalidate()
                 //Only nulling reference, not actual object
-                //currentDrawObj = null
+                currentDrawObj = null
                 //performClick()
             }
         }
@@ -117,6 +124,7 @@ class DrawView: View {
 
     -- 23:00 --
     to get the view to re draw itself, invalidate
+
 
     -- 31:00 --
     Everything in Java is pass by reference
