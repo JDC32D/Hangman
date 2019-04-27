@@ -9,14 +9,17 @@ import android.view.View
 import android.graphics.Color
 import android.graphics.Paint
 import android.text.TextUtils.indexOf
+import android.util.Log
 
-data class DrawObj(val origin: PointF) {
-    var endPoint: PointF = origin
-//    var start: PointF = origin
-//    var radius: Float = 0.toFloat()
-}
+//data class DrawObj(val origin: PointF) {
+//    var endPoint: PointF = origin
+//}
 
 class DrawView: View {
+
+    interface DrawViewInterface {
+        fun drawComplete()
+    }
 
     constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
     constructor(context: Context): super(context, null)
@@ -32,7 +35,6 @@ class DrawView: View {
     }
 
     override fun onDraw(canvas: Canvas?) {
-        // Log when drawing occurs
         //currentDrawObj?.let {
         //This forEach gives persistence on the screen
         objs.forEach{
@@ -77,10 +79,15 @@ class DrawView: View {
 //                invalidate()
                 //Only nulling reference, not actual object
                 currentDrawObj = null
+                drawComplete()
                 //performClick()
             }
         }
         return true
+    }
+
+    fun drawComplete(){
+        Log.e("DrawView", "User drew part of hangman")
     }
 
 
@@ -92,6 +99,10 @@ class DrawView: View {
     Everything defined in the XML are layout attributes or attribute sets
     we need to be sure this info gets forwarded to our superview
     you have to have certain constructors for it to show up correctly
+
+    To get the DrawView to work, need a context and attribute set.
+        attribute set - the attributes from your XML, width, height, gravity, etc.
+
 
     -- 56:00 --
     Whenever you pull in Google maps, you pull in their custom map view

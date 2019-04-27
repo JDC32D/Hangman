@@ -1,4 +1,16 @@
 <resources>
     <string name="app_name">DrawingTesting</string>
     <string name="startBtn">Start</string>
+    <string name="textview">Guessed Word Here</string>
+    <string name="guess">Guess</string>
+    <string-array name="words">
+        <item>well i didnt vote for you</item>
+        <item>a witch may we burn her</item>
+        <item>camelot is a silly place</item>
+        <item>brave sir robin</item>
+        <item>holy hand grenade</item>
+        <item>watery tart</item>
+        <item>autonomous collective</item>
+    </string-array>
+
 </resources>
