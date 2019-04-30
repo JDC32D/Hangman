@@ -1,5 +1,6 @@
 package com.example.drawingtesting
 
+import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.PointF
@@ -10,16 +11,15 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.text.TextUtils.indexOf
 import android.util.Log
-
-//data class DrawObj(val origin: PointF) {
-//    var endPoint: PointF = origin
-//}
+import kotlinx.android.synthetic.main.game_view_frag.view.*
 
 class DrawView: View {
 
-    interface DrawViewInterface {
-        fun drawComplete()
-    }
+//    interface DrawViewListener {
+//        fun drawComplete()
+//        fun viewLoaded()
+//    }
+//    var listener: DrawViewListener? = null
 
     constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
     constructor(context: Context): super(context, null)
@@ -31,8 +31,8 @@ class DrawView: View {
     init {
         //19:30
         paint.color = 0x22ff0000
-
     }
+
 
     override fun onDraw(canvas: Canvas?) {
         //currentDrawObj?.let {
@@ -79,17 +79,11 @@ class DrawView: View {
 //                invalidate()
                 //Only nulling reference, not actual object
                 currentDrawObj = null
-                drawComplete()
                 //performClick()
             }
         }
         return true
     }
-
-    fun drawComplete(){
-        Log.e("DrawView", "User drew part of hangman")
-    }
-
 
 }
 

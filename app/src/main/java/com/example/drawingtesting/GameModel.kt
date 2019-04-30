@@ -1,11 +1,17 @@
 package com.example.drawingtesting
 
-import android.util.Log
+/*
+Storing the words for the player to guess in this model file seems wrong
+as they are strings.
+So, I put them in the strings file but now the model is taken out of
+the loop when updating the string unless I make a copy of it, which
+seems like a bad practice.
+ */
 
 class GameModel {
     private val TOTAL_GUESSES = 7
-    //private val words = arrayListOf("HELLO WORLD","YEET","YEE HAW")
     private var currentWord = null
+    //private val wordsArray : Array<String> = resources.getStringArray(R.array.words)
     private val guessedLetters = arrayListOf<String>()
     private val correctGuesses = mutableListOf<String>()
     private var numGuess = 0
@@ -18,6 +24,13 @@ class GameModel {
             numGuess++
         }
         guessedLetters.add(guess)
+    }
+
+    fun newGame() {
+        guessedLetters.clear()
+        correctGuesses.clear()
+        numGuess = 0
+        wordNum = 0
     }
 
 }
