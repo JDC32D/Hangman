@@ -18,10 +18,10 @@ class DrawView: View {
     constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
     constructor(context: Context): super(context, null)
 
-    var currentDrawObj: DrawObj? = null
-    val paint = Paint()
+    private var currentDrawObj: DrawObj? = null
+    private val paint = Paint()
     var objs = arrayListOf<DrawObj>()
-    var isTouch = true
+    private var isTouch = true
 
     init {
         //19:30
@@ -29,8 +29,11 @@ class DrawView: View {
     }
 
 
+    /*
+    I want the first thing the player draws to be the head, so the first
+    action always draws a circle, then lines until game restarts
+     */
     override fun onDraw(canvas: Canvas?) {
-        //currentDrawObj?.let {
         //This forEach gives persistence on the screen
         objs.forEach{
             var radius = Math.abs(it.endPoint.y - it.origin.x)
@@ -44,7 +47,6 @@ class DrawView: View {
                     canvas?.drawCircle(it.origin.x, it.endPoint.y, radius, paint)
                 } else {
                     canvas?.drawLine(it.origin.x, it.origin.y, it.endPoint.x, it.endPoint.y, paint)
-                    //canvas?.drawCircle(objs[1].start.x, objs[1].endPoint.y, objs[1].radius, paint)
                 }
             }
         }
@@ -56,6 +58,10 @@ class DrawView: View {
 
         val currentPoint = PointF(event.x, event.y) //FloatingPoint
 
+        /*
+        I was going to use the isTouch to disable the player from drawing on the screen
+        when they need to guess but its a game, let them draw all they want.
+         */
         if(isTouch == true) {
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {

@@ -14,13 +14,17 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.game_view_frag.*
 import kotlinx.android.synthetic.main.game_view_frag.view.*
 import java.util.*
+import android.content.Intent
+
+
 
 /*
 TO-DO:
     +Display completed phrase if player loses
     +Ensure if they hit not to play again that the app closes
-    If they hit back, they are taken back to the main screen
+    +If they hit back, they are taken back to the main screen
     Hangman needs to be drawn, not a simple image
+    Notifications! I almost forgot
 
 If_time_permits
     make it so [enter] inputs whatever is typed on the keyboard
@@ -33,18 +37,11 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
     private var gameFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as? GameViewFragment
     private var word = ""
     private var display = ""
-    private var correctDisplay = ""
-    private var showGuessesDisplay = ""
-    //private var viewListener: DrawView? = null
     private lateinit var guessArray: Array<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-//        val vModel = ViewModelProviders.of(this).get(HangmanViewModel::class.java)
-//        vModel.getWordsToGuess()
-
-
     }
 
     //It says view is not used but it LIES and breaks if I take it out
@@ -61,7 +58,7 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
 
     override fun ready() {
         startGame()
-        Log.wtf("ready", "ready from activity")
+        //Log.wtf("ready", "ready from activity")
     }
 
     //Set the guessButtons's onclick to be this function
@@ -70,8 +67,6 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
             val userInput = playerGuess.text.toString().toLowerCase()
             playerGuess.text = null
 
-            // Change to for each loop for more than one character?
-            // That could cause user to lose all at once, so maybe not
             if (userInput.length == 1) {
                 if (userInput in word.toLowerCase()) {
                     model.submitGuess(userInput, true)
@@ -106,13 +101,27 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
                 return
             }
 
-            //Have User Draw hangman
 
         }
     }
 
     private fun revealWord() {
         playerGuesses.text = word
+    }
+
+    override fun onBackPressed() {
+        Log.wtf("Back button pressed", "Wtf")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.chicken)
+        builder.setPositiveButton(R.string.restart) {
+            _, _ ->
+            startActivity(Intent(this, MainActivity::class.java))
+        }
+        builder.setNegativeButton(R.string.exit) {
+            _, _ ->
+            finish()
+        }
+        builder.show()
     }
 
     private fun gameOverDialog(won: Boolean) {
@@ -166,24 +175,24 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
     }
 
     private fun updateWord() {
-        correctDisplay = "" // Need to do this or it will append the string
+        display = "" // Need to do this or it will append the string
 
         // update hidden words display
         word.forEach {
             if(it.isWhitespace()){
-                correctDisplay += " "
+                display += " "
             } else {
-                correctDisplay += model.checkIfGuessed(it.toString())
+                display += model.checkIfGuessed(it.toString())
             }
         }
-        playerGuesses.text = correctDisplay
+        playerGuesses.text = display
 
         // Store guesses and update showGuesses text
-        showGuessesDisplay = ""
+        display = ""
         model.incorrectGuesses.forEach {
-            showGuessesDisplay += "$it "
+            display += "$it "
         }
-        showGuesses.setText("Incorrect: " + showGuessesDisplay)
+        showGuesses.setText("Incorrect: " + display)
 
         //Check if player has lost
         if(model.isLoser) {
