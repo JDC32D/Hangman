@@ -15,7 +15,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/playerGuesses"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintBottom_toTopOf="@+id/playerGuess"/>
+            app:layout_constraintBottom_toTopOf="@+id/showGuesses"/>
     <TextView
             android:text="@string/textview"
             android:layout_width="wrap_content"
@@ -34,14 +34,15 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/guess"
-            android:inputType="textPersonName"
+            android:inputType="text"
             android:textAlignment="center"
             android:textAllCaps="false"
             android:textSize="30sp"
-            app:layout_constraintTop_toBottomOf="@id/drawView"
+            app:layout_constraintTop_toBottomOf="@id/showGuesses"
             app:layout_constraintBottom_toTopOf="@+id/guessButton" android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent" android:layout_marginStart="8dp"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.486"/>
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.486"
+    />
 
     <Button
             android:text="@string/guess"
@@ -52,4 +53,14 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" android:background="@color/blue" android:onClick="userGuess"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/showGuesses"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/drawView"
+            app:layout_constraintBottom_toTopOf="@id/playerGuess"
+            android:layout_marginStart="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginEnd="8dp" android:hint="Your Incorrect Guesses Go Here" android:textSize="18sp"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

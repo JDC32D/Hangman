@@ -3,6 +3,13 @@
     <string name="startBtn">Start</string>
     <string name="textview">Guessed Word Here</string>
     <string name="guess">Guess</string>
+    <string name="incorrect">Incorrect Guesses: %1</string>
+    <string name="play">Do you want to play again?</string>
+    <string name="start">Game Started</string>
+    <string name="win">You Win</string>
+    <string name="lose">You Lose</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
     <string-array name="words">
         <item>well i didnt vote for you</item>
         <item>a witch may we burn her</item>

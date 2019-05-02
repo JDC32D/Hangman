@@ -1,5 +1,7 @@
 package com.example.drawingtesting
 
+import android.text.method.TextKeyListener.clear
+
 /*
 Storing the words for the player to guess in this model file seems wrong
 as they are strings.
@@ -12,22 +14,52 @@ class GameModel {
     private val TOTAL_GUESSES = 7
     private var currentWord = null
     //private val wordsArray : Array<String> = resources.getStringArray(R.array.words)
-    private val guessedLetters = arrayListOf<String>()
-    private val correctGuesses = mutableListOf<String>()
+    val incorrectGuesses = arrayListOf<String>()
+    private val correctGuesses = arrayListOf<String>()
     private var numGuess = 0
     private var wordNum = 0
+    val isLoser: Boolean
+        get() = (numGuess >= TOTAL_GUESSES)
 
     fun submitGuess(guess: String, valid: Boolean) {
         if (valid) {
             correctGuesses.add(guess)
         } else {
+            incorrectGuesses.add(guess)
             numGuess++
         }
-        guessedLetters.add(guess)
+
     }
 
+    fun checkIfGuessed(guess: String) : String {
+        return when (correctGuesses.contains(guess.toLowerCase())) {
+            true -> guess
+            false -> "_"
+        }
+    }
+
+//    fun checkWin() : Boolean {
+//        if( numGuess >= TOTAL_GUESSES ) {
+//            return false
+//        }
+//        return true
+//    }
+
+    fun checkWin(word: String) : Boolean {
+        var correctAns = true
+        word.toLowerCase().forEach {
+            if (!correctGuesses.contains(it.toString()))
+                correctAns = false
+        }
+            if(correctAns)
+                return true
+        return false
+    }
+
+
+
     fun newGame() {
-        guessedLetters.clear()
+        incorrectGuesses.clear()
         correctGuesses.clear()
         numGuess = 0
         wordNum = 0

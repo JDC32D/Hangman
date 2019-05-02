@@ -7,19 +7,34 @@ import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.OneShotPreDrawListener.add
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.game_view_frag.*
+import kotlinx.android.synthetic.main.game_view_frag.view.*
 import java.util.*
 
+/*
+TO-DO:
+    +Display completed phrase if player loses
+    +Ensure if they hit not to play again that the app closes
+    If they hit back, they are taken back to the main screen
+    Hangman needs to be drawn, not a simple image
 
-class MainActivity : AppCompatActivity() {
+If_time_permits
+    make it so [enter] inputs whatever is typed on the keyboard
+    make the canvas not touchable when user is supposed to guess
+ */
+
+class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
 
     private var model = GameModel()
-    private var gameFragment = supportFragmentManager.findFragmentById(R.id.fragment_container)
+    private var gameFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as? GameViewFragment
     private var word = ""
     private var display = ""
+    private var correctDisplay = ""
+    private var showGuessesDisplay = ""
     //private var viewListener: DrawView? = null
     private lateinit var guessArray: Array<String>
 
@@ -41,9 +56,15 @@ class MainActivity : AppCompatActivity() {
                 .commit()
         }
         findViewById<Button>(R.id.startBtn).isEnabled = false
-
+        gameFragment?.registerListener(this)
     }
 
+    override fun ready() {
+        startGame()
+        Log.wtf("ready", "ready from activity")
+    }
+
+    //Set the guessButtons's onclick to be this function
     fun userGuess(click: View) {
         if (click == guessButton) {
             val userInput = playerGuess.text.toString().toLowerCase()
@@ -58,10 +79,24 @@ class MainActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT).show()
                 } else {
                     model.submitGuess(userInput, false)
-                    Toast.makeText(applicationContext, "$userInput was not in the word",
-                        Toast.LENGTH_SHORT).show()
+                    when(drawView.objs.size) {
+                        0 -> Toast.makeText(applicationContext, "$userInput not in the word\n Draw head of hangman",
+                            Toast.LENGTH_LONG).show()
+                        1 -> Toast.makeText(applicationContext, "$userInput not in the word\n Draw torso of hangman",
+                            Toast.LENGTH_LONG).show()
+                        2,3 -> Toast.makeText(applicationContext, "$userInput not in the word\n Draw arm of hangman",
+                            Toast.LENGTH_LONG).show()
+                        4,5 -> Toast.makeText(applicationContext, "$userInput not in the word\n Draw leg of hangman",
+                            Toast.LENGTH_LONG).show()
+                        else -> {
+                            Toast.makeText(applicationContext, "Tis but a scratch",
+                                Toast.LENGTH_LONG).show()
+                        }
+                    }
                 }
-                //updateWordString()
+
+                checkWin()
+                updateWord()
                 return
             }
 
@@ -76,19 +111,84 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun revealWord() {
+        playerGuesses.text = word
+    }
+
+    private fun gameOverDialog(won: Boolean) {
+        revealWord()
+        val builder = AlertDialog.Builder(this)
+        if(won) {
+            builder.setTitle(R.string.win)
+        } else {
+            builder.setTitle(R.string.lose)
+        }
+        builder.setMessage(R.string.play)
+
+        builder.setPositiveButton(R.string.yes) {
+            _, _ ->
+            startGame()
+            Toast.makeText(applicationContext,R.string.start,
+                Toast.LENGTH_SHORT).show()
+        }
+        builder.setNegativeButton(R.string.no) {
+            _, _ ->
+            finish()
+        }
+        val dialog = builder.create()
+        dialog.show()
+    }
+
+    private fun checkWin(){
+        if( model.checkWin(word) ){
+            gameOverDialog(true)
+        }
+    }
+
+    // Sets the playerGuess textView to display
     private fun startGame() {
         getRandWord()
         display = ""
         model.newGame()
 
+        // Not a very Kotlin way of doing a for each
         for ( letter in word ) {
-            if (letter.equals(" ")) {
+            if (letter.isWhitespace()) {
                 display += " "
             } else {
                 display += "_"
             }
         }
         playerGuesses.text = display
+        showGuesses.text = ""
+        drawView.objs.clear()
+        Log.wtf("startGame() : display", "$display")
+    }
+
+    private fun updateWord() {
+        correctDisplay = "" // Need to do this or it will append the string
+
+        // update hidden words display
+        word.forEach {
+            if(it.isWhitespace()){
+                correctDisplay += " "
+            } else {
+                correctDisplay += model.checkIfGuessed(it.toString())
+            }
+        }
+        playerGuesses.text = correctDisplay
+
+        // Store guesses and update showGuesses text
+        showGuessesDisplay = ""
+        model.incorrectGuesses.forEach {
+            showGuessesDisplay += "$it "
+        }
+        showGuesses.setText("Incorrect: " + showGuessesDisplay)
+
+        //Check if player has lost
+        if(model.isLoser) {
+            gameOverDialog(false)
+        }
     }
 
 
@@ -96,14 +196,20 @@ class MainActivity : AppCompatActivity() {
         guessArray = resources.getStringArray(R.array.words)
         val rand = Random().nextInt(guessArray.size)
         word = guessArray[rand]
+        Log.wtf("getRandWord() : word", "$word")
     }
 
-//    override fun viewLoaded() {
-//        Log.e("Activity", "Activity is listening to viewLoaded()")
-//    }
-//
-//    override fun drawComplete() {
-//        Log.e("Activity", "Activity is listening to drawComplete()")
-//    }
+    private fun pauseGuesses() {
+        guessButton.isClickable = false
+    }
+
+    private fun resumeGuesses() {
+        guessButton.isClickable = true
+    }
+
+    private fun enableDrawing() {
+
+    }
+
 
 }

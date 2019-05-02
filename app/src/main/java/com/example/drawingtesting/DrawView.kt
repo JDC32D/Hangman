@@ -15,18 +15,13 @@ import kotlinx.android.synthetic.main.game_view_frag.view.*
 
 class DrawView: View {
 
-//    interface DrawViewListener {
-//        fun drawComplete()
-//        fun viewLoaded()
-//    }
-//    var listener: DrawViewListener? = null
-
     constructor(context: Context, attrs: AttributeSet?): super(context, attrs)
     constructor(context: Context): super(context, null)
 
     var currentDrawObj: DrawObj? = null
     val paint = Paint()
     var objs = arrayListOf<DrawObj>()
+    var isTouch = true
 
     init {
         //19:30
@@ -61,28 +56,31 @@ class DrawView: View {
 
         val currentPoint = PointF(event.x, event.y) //FloatingPoint
 
-        when(event.actionMasked) {
-            MotionEvent.ACTION_DOWN -> {
-                currentDrawObj = DrawObj(currentPoint)
-                objs.add(currentDrawObj!!)
-            }
-            MotionEvent.ACTION_MOVE -> {
-                currentDrawObj?.let {
-                    it.endPoint = currentPoint
+        if(isTouch == true) {
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    currentDrawObj = DrawObj(currentPoint)
+                    objs.add(currentDrawObj!!)
                 }
-                invalidate()
+                MotionEvent.ACTION_MOVE -> {
+                    currentDrawObj?.let {
+                        it.endPoint = currentPoint
+                    }
+                    invalidate()
+                }
+                MotionEvent.ACTION_UP -> {
+                    //                currentDrawObj?.let {
+                    //                    objs.add(it)
+                    //                }
+                    //                invalidate()
+                    //Only nulling reference, not actual object
+                    currentDrawObj = null
+                    //performClick()
+                }
             }
-            MotionEvent.ACTION_UP -> {
-//                currentDrawObj?.let {
-//                    objs.add(it)
-//                }
-//                invalidate()
-                //Only nulling reference, not actual object
-                currentDrawObj = null
-                //performClick()
-            }
-        }
-        return true
+            return true
+        } else
+            return false
     }
 
 }

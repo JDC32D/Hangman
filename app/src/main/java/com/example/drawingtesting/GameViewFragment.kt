@@ -15,5 +15,20 @@ class GameViewFragment : Fragment() {
         return inflater.inflate(R.layout.game_view_frag, container, false)
     }
 
+    override fun onStart() {
+        super.onStart()
+        listener?.ready()
+    }
 
+    private var listener: GameListener? = null
+    interface GameListener {
+        fun ready()
+    }
+
+    fun registerListener(listener: GameListener) { this.listener = listener}
+    fun deregisterListener(listener: GameListener) {
+        if(this.listener == listener) {
+            this.listener = null
+        }
+    }
 }
