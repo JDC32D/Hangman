@@ -1,6 +1,7 @@
 package com.example.drawingtesting
 
 import android.text.method.TextKeyListener.clear
+import android.util.Log
 
 /*
 Storing the words for the player to guess in this model file seems wrong
@@ -12,12 +13,11 @@ seems like a bad practice.
 
 class GameModel {
     private val TOTAL_GUESSES = 7
-    private var currentWord = null
-    //private val wordsArray : Array<String> = resources.getStringArray(R.array.words)
     val incorrectGuesses = arrayListOf<String>()
     private val correctGuesses = arrayListOf<String>()
     private var numGuess = 0
     private var wordNum = 0
+    private var testWord = ""
     val isLoser: Boolean
         get() = (numGuess >= TOTAL_GUESSES)
 
@@ -38,16 +38,11 @@ class GameModel {
         }
     }
 
-//    fun checkWin() : Boolean {
-//        if( numGuess >= TOTAL_GUESSES ) {
-//            return false
-//        }
-//        return true
-//    }
-
     fun checkWin(word: String) : Boolean {
         var correctAns = true
-        word.toLowerCase().forEach {
+        testWord = ""
+        testWord = word.replace("\\s".toRegex(), "")
+        testWord.toLowerCase().forEach {
             if (!correctGuesses.contains(it.toString()))
                 correctAns = false
         }
@@ -55,8 +50,6 @@ class GameModel {
                 return true
         return false
     }
-
-
 
     fun newGame() {
         incorrectGuesses.clear()

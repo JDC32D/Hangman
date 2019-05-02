@@ -15,7 +15,8 @@ import kotlinx.android.synthetic.main.game_view_frag.*
 import kotlinx.android.synthetic.main.game_view_frag.view.*
 import java.util.*
 import android.content.Intent
-
+import android.graphics.Canvas
+import kotlinx.android.synthetic.main.activity_main.*
 
 
 /*
@@ -23,25 +24,22 @@ TO-DO:
     +Display completed phrase if player loses
     +Ensure if they hit not to play again that the app closes
     +If they hit back, they are taken back to the main screen
-    Hangman needs to be drawn, not a simple image
-    Notifications! I almost forgot
-
-If_time_permits
-    make it so [enter] inputs whatever is typed on the keyboard
-    make the canvas not touchable when user is supposed to guess
+    -Hangman needs to be drawn, not a simple image
+    -Notifications! I almost forgot
  */
 
 class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
 
     private var model = GameModel()
     private var gameFragment = supportFragmentManager.findFragmentById(R.id.fragment_container) as? GameViewFragment
-    private var word = ""
+    private var word = "" //I should have named this phrase
     private var display = ""
     private lateinit var guessArray: Array<String>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
     }
 
     //It says view is not used but it LIES and breaks if I take it out
@@ -58,7 +56,6 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
 
     override fun ready() {
         startGame()
-        //Log.wtf("ready", "ready from activity")
     }
 
     //Set the guessButtons's onclick to be this function
@@ -89,7 +86,6 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
                         }
                     }
                 }
-
                 checkWin()
                 updateWord()
                 return
@@ -100,8 +96,6 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
                     Toast.LENGTH_LONG).show()
                 return
             }
-
-
         }
     }
 
@@ -109,19 +103,46 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
         playerGuesses.text = word
     }
 
+    /*
+    I remember in my first CS course, I was tasked with asking the user
+    if they want to restart my C program. My naive solution? just call main again!
+    the instructor told me this is always a bad idea.
+
+    Now, here I am, calling Main again.
+    https://youtu.be/F4efZIHtiQQ?t=94
+
+    Is it a good idea to do this? I am guessing it is not.
+     */
     override fun onBackPressed() {
-        Log.wtf("Back button pressed", "Wtf")
+        Log.wtf("Back button pressed", "")
         val builder = AlertDialog.Builder(this)
         builder.setTitle(R.string.chicken)
-        builder.setPositiveButton(R.string.restart) {
-            _, _ ->
+        builder.setMessage(R.string.title)
+        builder.setPositiveButton(R.string.yes) { _, _ ->
             startActivity(Intent(this, MainActivity::class.java))
         }
-        builder.setNegativeButton(R.string.exit) {
-            _, _ ->
-            finish()
+        builder.setNegativeButton(R.string.no) { _, _ ->
+            //
         }
         builder.show()
+
+        /*
+       This causes a crash but i wanted back to close the app
+       when on the main page
+       */
+//        if(drawView.isShown) {
+//            builder.setTitle(R.string.chicken)
+//            builder.setMessage(R.string.title)
+//            builder.setPositiveButton(R.string.yes) { _, _ ->
+//                startActivity(Intent(this, MainActivity::class.java))
+//            }
+//            builder.setNegativeButton(R.string.no) { _, _ ->
+//                //
+//            }
+//            builder.show()
+//        } else {
+//            finish()
+//        }
     }
 
     private fun gameOverDialog(won: Boolean) {
@@ -142,7 +163,9 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
         }
         builder.setNegativeButton(R.string.no) {
             _, _ ->
-            finish()
+            // finish()
+            // Requirement: Return to title screen if they don't want to play again
+            startActivity(Intent(this, MainActivity::class.java))
         }
         val dialog = builder.create()
         dialog.show()
@@ -154,7 +177,6 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
         }
     }
 
-    // Sets the playerGuess textView to display
     private fun startGame() {
         getRandWord()
         display = ""
@@ -175,7 +197,7 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
     }
 
     private fun updateWord() {
-        display = "" // Need to do this or it will append the string
+        display = ""
 
         // update hidden words display
         word.forEach {
@@ -192,9 +214,8 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
         model.incorrectGuesses.forEach {
             display += "$it "
         }
-        showGuesses.setText("Incorrect: " + display)
+        showGuesses.setText("Incorrect: " + display)// Refactor to add placeholder in R.string.incorrect
 
-        //Check if player has lost
         if(model.isLoser) {
             gameOverDialog(false)
         }
@@ -208,17 +229,13 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
         Log.wtf("getRandWord() : word", "$word")
     }
 
-    private fun pauseGuesses() {
-        guessButton.isClickable = false
-    }
-
-    private fun resumeGuesses() {
-        guessButton.isClickable = true
-    }
-
-    private fun enableDrawing() {
-
-    }
-
+// I no longer want to force user to draw, so I don't need these anymore
+//    private fun pauseGuesses() {
+//        guessButton.isClickable = false
+//    }
+//
+//    private fun resumeGuesses() {
+//        guessButton.isClickable = true
+//    }
 
 }

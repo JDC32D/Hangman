@@ -1,17 +1,12 @@
 package com.example.drawingtesting
 
-import android.app.Activity
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.PointF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import android.graphics.Color
 import android.graphics.Paint
-import android.text.TextUtils.indexOf
-import android.util.Log
-import kotlinx.android.synthetic.main.game_view_frag.view.*
 
 class DrawView: View {
 
@@ -25,7 +20,7 @@ class DrawView: View {
 
     init {
         //19:30
-        paint.color = 0x22ff0000
+        paint.color = 0xfff8efe0.toInt()
     }
 
 
