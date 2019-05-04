@@ -35,7 +35,6 @@ class StaticHangmanDraw : View {
 
     override fun onDraw(canvas: Canvas) {
         drawHangman(canvas)
-        Log.wtf("StaticDrawing", "($totalX,$totalY)")
         super.onDraw(canvas)
     }
 

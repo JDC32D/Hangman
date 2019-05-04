@@ -5,18 +5,11 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.view.OneShotPreDrawListener.add
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.game_view_frag.*
-import kotlinx.android.synthetic.main.game_view_frag.view.*
 import java.util.*
 import android.content.Intent
-import android.graphics.Canvas
-import kotlinx.android.synthetic.main.activity_main.*
 
 
 /*
@@ -24,8 +17,8 @@ TO-DO:
     +Display completed phrase if player loses
     +Ensure if they hit not to play again that the app closes
     +If they hit back, they are taken back to the main screen
-    -Hangman needs to be drawn, not a simple image
-    -Notifications! I almost forgot
+    +Hangman needs to be drawn, not a simple image
+    +Fix exit conditions
  */
 
 class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
@@ -39,7 +32,6 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
     }
 
     //It says view is not used but it LIES and breaks if I take it out
@@ -114,35 +106,37 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
     Is it a good idea to do this? I am guessing it is not.
      */
     override fun onBackPressed() {
-        Log.wtf("Back button pressed", "")
-        val builder = AlertDialog.Builder(this)
-        builder.setTitle(R.string.chicken)
-        builder.setMessage(R.string.title)
-        builder.setPositiveButton(R.string.yes) { _, _ ->
-            startActivity(Intent(this, MainActivity::class.java))
-        }
-        builder.setNegativeButton(R.string.no) { _, _ ->
-            //
-        }
-        builder.show()
 
-        /*
-       This causes a crash but i wanted back to close the app
-       when on the main page
-       */
-//        if(drawView.isShown) {
-//            builder.setTitle(R.string.chicken)
-//            builder.setMessage(R.string.title)
-//            builder.setPositiveButton(R.string.yes) { _, _ ->
-//                startActivity(Intent(this, MainActivity::class.java))
-//            }
-//            builder.setNegativeButton(R.string.no) { _, _ ->
-//                //
-//            }
-//            builder.show()
-//        } else {
-//            finish()
-//        }
+        if (drawView == null) {
+            Log.wtf("BackBtn Pressed", "BackBtn on title screen")
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(R.string.chicken)
+            builder.setMessage(R.string.exit)
+            builder.setPositiveButton(R.string.yes) {
+                _, _ ->
+                finish()
+            }
+            builder.setNegativeButton(R.string.no) {
+                _, _ ->
+                //Do nothing
+            }
+            builder.show()
+        }
+
+        else {
+            Log.wtf("Back button pressed", "")
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(R.string.chicken)
+            builder.setMessage(R.string.title)
+            builder.setPositiveButton(R.string.yes) { _, _ ->
+                startActivity(Intent(this, MainActivity::class.java))
+            }
+            builder.setNegativeButton(R.string.no) { _, _ ->
+                //
+            }
+            builder.show()
+        }
+
     }
 
     private fun gameOverDialog(won: Boolean) {
@@ -239,3 +233,33 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
 //    }
 
 }
+/*
+private fun scheduleNotification(
+    context: Context,
+    delay: Long,
+    notificationId: Int
+) {//delay is after how much time(in millis) from current time you want to schedule the notification
+    val builder = NotificationCompat.Builder(context)
+        .setContentTitle(getString(R.string.notification_title))
+        .setContentText(getString(R.string.notification_msg))
+        .setAutoCancel(true)
+        .setSmallIcon(R.drawable.notification_icon_background)
+        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+
+    val intent = Intent(context, MainActivity::class.java)
+    val activity = PendingIntent.getActivity(context, notificationId, intent, PendingIntent.FLAG_CANCEL_CURRENT)
+    builder.setContentIntent(activity)
+
+    val notification = builder.build()
+
+    val notificationIntent = Intent(context, MyNotificationPublisher::class.java)
+    notificationIntent.putExtra(MyNotificationPublisher.NOTIFICATION_ID, notificationId)
+    notificationIntent.putExtra(MyNotificationPublisher.NOTIFICATION, notification)
+    val pendingIntent =
+        PendingIntent.getBroadcast(context, notificationId, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT)
+
+    val futureInMillis = SystemClock.elapsedRealtime() + delay
+    val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, futureInMillis, pendingIntent)
+}
+*/

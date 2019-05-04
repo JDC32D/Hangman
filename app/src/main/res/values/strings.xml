@@ -1,5 +1,7 @@
 <resources>
     <string name="app_name">DrawingTesting</string>
+    <string name="notification_title">A quest from the lord</string>
+    <string name="notification_msg">Play the game</string>
     <string name="main_title">Monty Python and The Holy Hangman</string>
     <string name="startBtn">Start</string>
     <string name="textview">Guessed Word Here</string>
