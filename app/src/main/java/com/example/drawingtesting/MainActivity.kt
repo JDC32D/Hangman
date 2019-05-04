@@ -129,10 +129,11 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
             builder.setTitle(R.string.chicken)
             builder.setMessage(R.string.title)
             builder.setPositiveButton(R.string.yes) { _, _ ->
+                finish()
                 startActivity(Intent(this, MainActivity::class.java))
             }
             builder.setNegativeButton(R.string.no) { _, _ ->
-                //
+                //Do nothing
             }
             builder.show()
         }
@@ -157,7 +158,7 @@ class MainActivity : AppCompatActivity(), GameViewFragment.GameListener {
         }
         builder.setNegativeButton(R.string.no) {
             _, _ ->
-            // finish()
+            finish()
             // Requirement: Return to title screen if they don't want to play again
             startActivity(Intent(this, MainActivity::class.java))
         }

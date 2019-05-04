@@ -18,13 +18,12 @@
     <string name="exit">Yes will exit the application</string>
     <string name="restart">Restart</string>
     <string-array name="words">
-        <item>well i didnt vote for you</item>
-        <item>a witch may we burn her</item>
-        <item>camelot is a silly place</item>
+        <item>killer rabbit</item>
         <item>brave sir robin</item>
-        <item>holy hand grenade</item>
+        <item>blue no yellow</item>
+        <item>migrating coconuts</item>
+        <item>tracks of land</item>
         <item>watery tart</item>
-        <item>autonomous collective</item>
     </string-array>
 
 </resources>
